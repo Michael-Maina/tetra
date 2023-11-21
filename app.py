@@ -5,10 +5,12 @@ Simple REST API Module
 from dotenv import load_dotenv
 from flask import Flask
 from os import getenv
+from views import audio
 
 load_dotenv()
 app = Flask(__name__)
 
+app.register_blueprint(audio)
 
 if __name__ == '__main__':
     API_HOST = getenv('API_HOST')
