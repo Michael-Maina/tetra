@@ -3,7 +3,7 @@
 Simple REST API Module
 """
 from dotenv import load_dotenv
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_login import LoginManager, login_required
 from models.user import User
 from os import getenv
