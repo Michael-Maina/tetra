@@ -8,4 +8,4 @@ def transcribe_audio(file_path):
                 model="whisper-1",
                 file=audio_file
         )
-    return transcript
+    return transcript["text"] if "text" in transcript else None
