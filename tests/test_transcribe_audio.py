@@ -12,6 +12,7 @@ class TestTranscribeAudio(unittest.TestCase):
         result = transcribe_audio("path/to/fake/audio/file")
         
         self.assertEqual(result, "Sample transcription")
+        self.assertIsInstance(result, str)
         mock_file.assert_called_once_with("path/to/fake/audio/file", 'rb')
         mock_openai.return_value.audio.transcriptions.create.assert_called_once()
         

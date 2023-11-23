@@ -1,5 +1,6 @@
 import openai
 import os
+from flask import jsonify
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -44,4 +45,4 @@ def extract_entities(text):
         frequency_penalty=0,
         presence_penalty=0,
     )
-    return response.choices[0].message["content"]
+    return response['choices'][0]['message']['content']

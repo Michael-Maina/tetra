@@ -7,12 +7,15 @@ from flask import Flask
 from os import getenv
 from views import audio
 
-load_dotenv()
-app = Flask(__name__)
-
-app.register_blueprint(audio)
+def create_app():
+    load_dotenv()
+    app = Flask(__name__)
+    app.register_blueprint(audio)
+    return app
 
 if __name__ == '__main__':
+    app = create_app()
+    
     API_HOST = getenv('API_HOST')
     API_PORT = getenv('API_PORT')
 
