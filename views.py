@@ -60,11 +60,3 @@ def cleanup_extracted_data():
                       if current_time - value["timestamp"] > expiration_threshold]
     for key in keys_to_delete:
         del extracted_data_storage[key]
-
-def start_cleanup_thread():
-    def cleanup_loop():
-        while True:
-            cleanup_extracted_data()
-            time.sleep(3600)
-    thread = threading.Thread(target=cleanup_loop)
-    thread.start()

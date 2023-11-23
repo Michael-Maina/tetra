@@ -4,12 +4,22 @@ Simple REST API Module
 """
 from dotenv import load_dotenv
 from flask import Flask
+from flask_apscheduler import APScheduler
 from os import getenv
-from views import audio
+from views import audio,cleanup_extracted_data
 
 def create_app():
     load_dotenv()
     app = Flask(__name__)
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    app.scheduler = scheduler
+    
+    scheduler.add_job(id='Scheduled Cleanup', func=cleanup_extracted_data,
+                      trigger='interval', seconds=3600)
+    
+    scheduler.start()
+    
     app.register_blueprint(audio)
     return app
 
