@@ -4,9 +4,10 @@ Simple REST API Module
 """
 from dotenv import load_dotenv
 from flask import Flask, render_template
-from flask_login import LoginManager, login_required
+from flask_login import current_user, LoginManager, login_required
 from models.user import User
 from os import getenv
+from utils.contact_func import get_user_contact
 
 # Load environment variables
 load_dotenv()
@@ -32,8 +33,12 @@ def index():
 @login_required
 def logged_in():
     """ Testing Login """
-    return render_template('logged_in.html')
 
+    contacts = get_user_contact('l', current_user.access_token)
+    print()
+    print(contacts)
+    print()
+    return render_template('logged_in.html')
 
 @login_manager.user_loader
 def load_user(user_id):
