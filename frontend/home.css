@@ -25,6 +25,7 @@
 }
 
 body{
+    position: relative;
     height: 100vh;
     background: var(--body-color);
     transition: var(--tran-04);
@@ -258,9 +259,15 @@ body.dark .switch::before{
     left: 25px;
 }
 
+/* .sidebar.close ~ .home{
+    left: 88px;
+    width: calc(100% = 88px);
+} */
+
 .home{
-    position: relative;
+    position: absolute;
     left: 250px;
+    right: 0;
     height: 100vh;
     width: calc(100% = 250px);
     background: var(--body-color);
@@ -272,9 +279,4 @@ body.dark .switch::before{
     font-weight: 500;
     color: var(--text-color);
     padding: 8px 40px;
-}
-
-.sidebar.close ~ .home{
-    left: 88px;
-    width: calc(100% = 88px);
 }
