@@ -56,7 +56,7 @@ def handle_audio():
             os.remove(temp_file.name)
 
 def allowed_file(filename):
-    ALLOWED_EXTENSIONS = {'wav', 'mp3', 'flac'}
+    ALLOWED_EXTENSIONS = {'wav', 'mp3', 'flac', 'm4a'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def is_file_size_allowed(file, max_size):

@@ -9,9 +9,10 @@ from flask_login import current_user, LoginManager, login_required
 from models.user import User
 from flask_apscheduler import APScheduler
 from os import getenv
-from views import audio,cleanup_extracted_data
+from views import audio, cleanup_extracted_data
 from utils.contact_func import get_user_contact
-
+from transcribe_audio import transcribe_audio
+from extract_entities import extract_entities
 
 # Load environment variables
 load_dotenv()
@@ -39,8 +40,11 @@ def logged_in():
     """ Testing Login """
 
     contacts = get_user_contact('l', current_user.access_token)
+    transcribed_text = transcribe_audio('./Recording.m4a')
+    entities = extract_entities(transcribed_text)
     print()
-    print(contacts)
+    print(type(entities))
+    print(entities)
     print()
     return render_template('logged_in.html')
 
