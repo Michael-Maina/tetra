@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE-edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <!-------===== CSS =====------->
+    <link rel="stylesheet" href="../static/styles/home.css" />
+    <link rel="stylesheet" href="../static/styles/Calendar.css">
+    <link rel="stylesheet" href="../static/styles/Event.css">
+    <link rel="stylesheet" href="../static/styles/Recorder.css">
+    <!-------===== Boxicons CSS =====------->
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+  </head>
+  <body>
+    <nav class="sidebar close">
+      <header>
+        <div class="image-text">
+          <span class="image">
+            <img src="../static/images/logo.png" />
+          </span>
+
+          <div class="text header-text">
+            <span class="name">Tetra</span>
+          </div>
+
+          <i class="bx bx-chevron-right toggle"></i>
+        </div>
+      </header>
+
+      <div class="menu-bar">
+        <div class="menu">
+          <ul class="menu-links">
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-home-alt icon"></i>
+                <span class="text nav-text">Home</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-calendar-alt icon"></i>
+                <span class="text nav-text">Calendar</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-microphone icon"></i>
+                <span class="text nav-text">Microphone</span>
+              </a>
+            </li>
+            <li class="nav-link">
+              <a href="#">
+                <i class="bx bx-conversation icon"></i>
+                <span class="text nav-text">Chat</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bottom-content">
+          <li class="nav-link">
+            <a href="">
+              <i class="bx bx-log-out icon"></i>
+              <span class="text nav-text">Logout</span>
+            </a>
+          </li>
+
+          <li class="mode">
+            <div class="moon-sun">
+              <i class="bx bx-moon icon moon"></i>
+              <i class="bx bx-sun icon sun"></i>
+            </div>
+            <span class="mode-text text">Dark Mode</span>
+
+            <div class="toggle-switch">
+              <span class="switch"> </span>
+            </div>
+          </li>
+        </div>
+      </div>
+    </nav>
+
+    <div class="content">
+      <section class="home">
+        <div class="text">Dashboard</div>
+        <div id="events-container">
+          <div id="events-list"></div>
+      </div>
+      </section>
+
+
+      <section class="calendar">
+        <div class="wrapper">
+          <header>
+              <button id="prevBtn">&lt;</button>
+              <h2 id="monthYear" class="current-date">Month Year</h2>
+              <button id="nextBtn">&gt;</button>
+          </header>
+          <div class="calendar">
+              <ul class="weeks"></ul>
+          </div>
+      </div>
+      </section>
+
+      <section class="microphone">
+        <h1>Audio Recorder</h1>
+        <button id="startRecord">
+          <i class='bx bxs-microphone'></i> <!-- Boxicons microphone icon for start recording -->
+        </button>
+        <button id="stopRecord" disabled>
+          <i class='bx bx-stop'></i> <!-- Boxicons stop icon for stop recording -->
+        </button>
+      </section>
+
+
+      <section class="chat"></section>
+    </div>
+
+    <script src="../static/scripts/script.js"></script>
+    <script src="../static/scripts/Calendar.js"></script>
+    <script src="../static/scripts/AudioRecorder.js"></script>
+  </body>
+</html>

@@ -3,9 +3,10 @@
 Simple REST API Module
 """
 from dotenv import load_dotenv
-
 from flask import Flask, render_template
 from flask_login import current_user, LoginManager, login_required
+from flask import Flask, render_template, request
+from flask_login import LoginManager, login_required
 from models.user import User
 from flask_apscheduler import APScheduler
 from os import getenv
