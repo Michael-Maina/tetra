@@ -13,12 +13,19 @@ extracted_data_storage = {}
 
 @audio.route('/audios', methods=['POST'])
 def handle_audio():
+    MAX_FILE_SIZE = 5 * 1024 * 1024
     if 'audio' not in request.files:
         return jsonify({"error": "File not found"}), 404
     
     temp_file = None
     try:
         audio_file = request.files['audio']
+        
+        if not allowed_file(audio_file.filename):
+            return jsonify({"error": "Invalid file type"}), 400
+
+        if not is_file_size_allowed(audio_file, MAX_FILE_SIZE):
+            return jsonify({"error": "File size exceeds limit"}), 413
         
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             audio_file.save(temp_file.name)
@@ -43,8 +50,20 @@ def handle_audio():
             "data_key": data_key, 
         })
     finally:
+        if temp_file:
+            temp_file.close()
         if temp_file and os.path.exists(temp_file.name):
             os.remove(temp_file.name)
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'wav', 'mp3', 'flac'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def is_file_size_allowed(file, max_size):
+    file.seek(0, os.SEEK_END)
+    file_size = file.tell()
+    file.seek(0)
+    return file_size <= max_size
 
 @audio.route('/extracted_data/<data_key>', methods=['GET'])
 def get_extracted_data(data_key):
