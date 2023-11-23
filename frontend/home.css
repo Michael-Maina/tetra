@@ -265,6 +265,7 @@ body.dark .switch::before{
 } */
 
 .home{
+    /* display: none; */
     position: absolute;
     left: 250px;
     right: 0;

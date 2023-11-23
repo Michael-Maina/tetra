@@ -14,6 +14,8 @@
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="./Calendar.css">
+    <link rel="stylesheet" href="./Event.css">
   </head>
   <body>
     <nav class="sidebar close">
@@ -35,25 +37,25 @@
         <div class="menu">
           <ul class="menu-links">
             <li class="nav-link">
-              <a href="">
+              <a href="#">
                 <i class="bx bx-home-alt icon"></i>
                 <span class="text nav-text">Home</span>
               </a>
             </li>
             <li class="nav-link">
-              <a href="">
+              <a href="#">
                 <i class="bx bx-calendar-alt icon"></i>
                 <span class="text nav-text">Calendar</span>
               </a>
             </li>
             <li class="nav-link">
-              <a href="">
+              <a href="#">
                 <i class="bx bx-microphone icon"></i>
                 <span class="text nav-text">Microphone</span>
               </a>
             </li>
             <li class="nav-link">
-              <a href="">
+              <a href="#">
                 <i class="bx bx-conversation icon"></i>
                 <span class="text nav-text">Chat</span>
               </a>
@@ -84,16 +86,33 @@
       </div>
     </nav>
 
-    <section class="home">
-      <div class="text">Dashboard</div>
-      <ul class="meeting-list">
-        <li><span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates, sed!</span><input type="checkbox" class="meeting-checkbox"></li>
-        <li><span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, dolores.</span><input type="checkbox" class="meeting-checkbox"></li>
-        <li><span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi, suscipit.</span><input type="checkbox" class="meeting-checkbox"></li>
-        <li><span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, reiciendis?</span><input type="checkbox" class="meeting-checkbox"></li>
-      </ul>
-    </section>
+    <div class="content">
+      <section class="home">
+        <div class="text">Dashboard</div>
+        <div id="events-container">
+          <div id="events-list"></div>
+      </div>
+      </section>
 
-    <script src="script.js"></script>
+
+      <section class="calendar">
+        <div class="wrapper">
+          <header>
+              <button id="prevBtn">&lt;</button>
+              <h2 id="monthYear" class="current-date">Month Year</h2>
+              <button id="nextBtn">&gt;</button>
+          </header>
+          <div class="calendar">
+              <ul class="weeks"></ul>
+          </div>
+      </div>
+      </section>
+
+      <section class="microphone"></section>
+      <section class="chat"></section>
+    </div>
+
+    <script src="./script.js"></script>
+    <script src="./Calendar.js"></script>
   </body>
 </html>

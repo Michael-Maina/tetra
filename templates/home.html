@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Calendar Events</title>
+</head>
+<body>
+    <h1>Upcoming Events</h1>
+    {% if upcoming_events %}
+        <ul>
+            {% for event in upcoming_events %}
+                <li>{{ event.start }} - {{ event.summary }} <a href="{{ url_for('delete', event_id=event.id) }}">Delete</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No upcoming events found.</p>
+    {% endif %}
+    <p><a href="{{ url_for('login') }}">Login with Google</a></p>
+    <p><a href="{{ url_for('logout') }}">Log out</a></p>
+    <p><a href="{{ url_for('create') }}">Create</a></p>
+
+</body>
+</html>

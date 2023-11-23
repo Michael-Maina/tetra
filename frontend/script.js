@@ -1,78 +1,96 @@
 const body = document.querySelector("body"),
-        sidebar = body.querySelector(".sidebarbody"),
-        toggle = body.querySelector(".toggle"),
-        modeSwitch = body.querySelector(".toggle-switch"),
-        modeText = body.querySelector(".mode-text");
+sidebar = body.querySelector(".sidebarbody"),
+toggle = body.querySelector(".toggle"),
+modeSwitch = body.querySelector(".toggle-switch"),
+modeText = body.querySelector(".mode-text");
 
-        toggle.addEventListener("click", () =>{
-            sidebar.classList.toggle("close");
-        });
+toggle.addEventListener("click", () =>{
+    sidebar.classList.toggle("close");
+});
 
-        modeSwitch.addEventListener("click", () =>{
-            body.classList.toggle("dark");
+modeSwitch.addEventListener("click", () =>{
+    body.classList.toggle("dark");
 
-            if(body.classList.contains("dark")){
-                modeText.innerText = "Light Mode"
-            }else{
-                modeText.innerText = "Dark Mode"
-            }
-        });
+    if(body.classList.contains("dark")){
+        modeText.innerText = "Light Mode"
+    }else{
+        modeText.innerText = "Dark Mode"
+    }
+});
 
-const currentDate = document.querySelector(".current-date"),
-daysTag = document.querySelector(".days"),
-prevNextIcon = document.querySelectorAll(".icons span"); 
 
-// getting new date, current year and month
-let date = new Date(),
-currYear = date.getFullYear(),
-currMonth = date.getMonth();
+// script.js
 
-const months = ["January", "February", "March", "April", "May", "June", "July",
-                "August", "September", "October", "November", "December"];
+document.addEventListener('DOMContentLoaded', function () {
+    // Get references to the sections
+    const dashboardSection = document.querySelector('.home');
+    const calendarSection = document.querySelector('.calendar');
+    const microphoneSection = document.querySelector('.microphone');
+    const chatSection = document.querySelector('.chat');
 
-const renderCalendar = () => {
-    let firstDayofMonth = new Date(currYear, currMonth , 1).getDay(), // getting first date of the month
-    lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(), //getting last day of the month
-    lastDayofLastMonth = new Date(currYear, currMonth, lastDateofMonth).getDay(), //getting last day of the month
-    lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate(), //getting last day of the month
-    let liTag = "";
+    // Get references to the sidebar links
+    const homeLink = document.querySelector('.nav-link:nth-child(1) a');
+    const calendarLink = document.querySelector('.nav-link:nth-child(2) a');
+    const microphoneLink = document.querySelector('.nav-link:nth-child(3) a');
+    const chatLink = document.querySelector('.nav-link:nth-child(4) a');
 
-    for (let i = firstDayofMonth; i > 0; i--) {
-        liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`; // creating li of previous month last days
+    // Function to hide all sections
+    function hideAllSections() {
+        dashboardSection.style.display = 'none';
+        calendarSection.style.display = 'none';
+        microphoneSection.style.display = 'none';
+        chatSection.style.display = 'none';
     }
 
-    
-    for (let i = 1; i <= lastDateofMonth; i++) {
-        //adding active class to li if the current day, month, and year matched
-        let isToday = i === date.getDate() && currMonth === new Date().getMonth()
-                        && currYear === new Date().getFullYear() ? "active" : "";
-        liTag += `<li class="${isToday}">${i}</li>`; // creating li of all days of current month
-    }
+    // Initially hide all sections except the dashboard
+    hideAllSections();
+    dashboardSection.style.display = 'block';
 
-    for (let i = lastDayofMonth; i < 6; i++) {
-        liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`; // creating li of next month first days
-    }
+    // Event listeners for sidebar links
+    homeLink.addEventListener('click', () => {
+        hideAllSections();
+        dashboardSection.style.display = 'block';
+    });
 
-    currentDate.innerText = `${months[currMonth]} ${currYear}`;
-    daysTag.innerHTML = liTag;
-}
-renderCalendar();
+    calendarLink.addEventListener('click', () => {
+        hideAllSections();
+        calendarSection.style.display = 'block';
+    });
 
-prevNextIcon.forEach(icon => {
-    icon.addEventListener("click", () => { //adding click event on both icons
-        // if clicked icon is previous icon then decrement current month by 1
-        currMonth = icon.id === "prev" ? currMonth - 1 : currMonth + 1;
+    microphoneLink.addEventListener('click', () => {
+        hideAllSections();
+        microphoneSection.style.display = 'block';
+    });
 
-        if(currMonth < 0 || currMonth > 11) { // if current month is less than 0 or greater thann 11
-            // creating a new date of curent year & month & pass it as a date value
-            date = new Date(currYear, currMonth);
-            currYear = date.getFullYear(); //updating current year with new date year
-            currMonth = date.getMonth(); // updating current month with new date month
-        } else { // else pass new Date as date value
-            date = new Date();
-        }
-
-        renderCalendar();
+    chatLink.addEventListener('click', () => {
+        hideAllSections();
+        chatSection.style.display = 'block';
     });
 });
-    
+
+
+
+// Add your Google Calendar API integration here
+
+// Sample data (replace with your actual data)
+const sampleEvents = [
+    { summary: 'Event 1', start: '2023-11-30T10:00:00Z' },
+    { summary: 'Event 2', start: '2023-12-01T15:30:00Z' },
+    // Add more events as needed
+];
+
+function renderEvents(events) {
+    const eventsList = document.getElementById('events-list');
+    eventsList.innerHTML = '';
+
+    events.forEach(event => {
+        const eventElement = document.createElement('div');
+        eventElement.classList.add('event');
+        eventElement.innerHTML = `<strong>${event.summary}</strong><br>${new Date(event.start).toLocaleString()}`;
+        eventsList.appendChild(eventElement);
+    });
+}
+
+// Call the Google Calendar API and pass the received events to renderEvents function
+// Replace this with your actual API call
+renderEvents(sampleEvents);
