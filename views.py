@@ -20,6 +20,8 @@ def handle_audio():
     temp_file = None
     try:
         audio_file = request.files['audio']
+        audio_file.save('test_audio.mp3')
+        transcription_text = transcribe_audio('./test_audio.mp3')
         
         if not allowed_file(audio_file.filename):
             return jsonify({"error": "Invalid file type"}), 400
@@ -30,12 +32,17 @@ def handle_audio():
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             audio_file.save(temp_file.name)
 
-        transcription_text = transcribe_audio(temp_file.name)
+       # transcription_text = transcribe_audio(temp_file.name)
         
         if transcription_text is None:
             return jsonify({"error": "Transcription failed"}), 500
         
         extracted_data = extract_entities(transcription_text)
+
+        print()
+        print(transcription_text)
+        print(extracted_data)
+        print()
         
         data_key = str(hash(transcription_text))
         current_time = time.time()

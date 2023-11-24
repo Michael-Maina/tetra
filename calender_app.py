@@ -1,14 +1,22 @@
 import json
-from flask import Flask, render_template, redirect, request, url_for, session, jsonify
+from flask import Blueprint, Flask, render_template, redirect, request, url_for, session, jsonify
+from flask_login import current_user, login_required
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import os.path
-# import datetime
+from os import getenv
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
+
+# Create auth blueprint
+calendar = Blueprint('calendar', __name__)
+
+# Load environment variables
+load_dotenv()
 
 
 # Disable OAuthlib's HTTPs verification when running locally.
@@ -16,28 +24,34 @@ from datetime import datetime, timedelta
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 
-app = Flask(__name__)
-app.secret_key = "Alstede2480"  # Replace with a strong secret key
+# app = Flask(__name__)
+# app.secret_key = "Alstede2480"  # Replace with a strong secret key
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
-# This should be set to your web app's URL
-REDIRECT_URI = "http://localhost:5000/oauth2callback"
+# # This should be set to your web app's URL
+# REDIRECT_URI = "http://localhost:5000/oauth2callback"
 
 # The client_secrets.json file downloaded from the Google Cloud Console
-CLIENT_SECRETS = "Cred2.json"
+CLIENT_SECRETS = "credentials.json"
 
 
-
-
-@app.route("/")
+@calendar.route("/calendar")
+@login_required
 def home():
-    if "credentials" not in session:
-        return redirect(url_for("login"))
+    # if "credentials" not in session:
+    #     return redirect(url_for("login"))
 
     # Load the credentials from the JSON string
-    credentials_info = json.loads(session["credentials"])
+    credentials_info = {
+        'token': current_user.access_token,
+        'refresh_token': current_user.refresh_token,
+        'token_uri': getenv('GOOGLE_GET_TOKENS_URL'),
+        'client_id': getenv('GOOGLE_CLIENT_ID'),
+        'client_secret': getenv('GOOGLE_CLIENT_SECRET'),
+        'scopes': SCOPES
+    } #json.loads(session["credentials"])
 
     credentials = Credentials.from_authorized_user_info(credentials_info, SCOPES)
     service = build("calendar", "v3", credentials=credentials)
@@ -69,41 +83,49 @@ def home():
     return render_template("home.html", upcoming_events=upcoming_events)
 
 
-@app.route("/login")
-def login():
-    flow = Flow.from_client_secrets_file(CLIENT_SECRETS, SCOPES, redirect_uri=REDIRECT_URI)
-    authorization_url, state = flow.authorization_url(prompt="consent")
+# @app.route("/login")
+# def login():
+#     flow = Flow.from_client_secrets_file(CLIENT_SECRETS, SCOPES, redirect_uri=REDIRECT_URI)
+#     authorization_url, state = flow.authorization_url(prompt="consent")
 
-    # Store the state so the callback can verify the response.
-    session["oauth_state"] = state
+#     # Store the state so the callback can verify the response.
+#     session["oauth_state"] = state
 
-    return redirect(authorization_url)
+#     return redirect(authorization_url)
 
 
-@app.route("/oauth2callback")
-def oauth2callback():
-    state = session["oauth_state"]
+# @app.route("/oauth2callback")
+# def oauth2callback():
+#     state = session["oauth_state"]
 
-    flow = Flow.from_client_secrets_file(CLIENT_SECRETS, SCOPES, state=state, redirect_uri=REDIRECT_URI)
-    flow.fetch_token(authorization_response=request.url)
+#     flow = Flow.from_client_secrets_file(CLIENT_SECRETS, SCOPES, state=state, redirect_uri=REDIRECT_URI)
+#     flow.fetch_token(authorization_response=request.url)
 
-    # Store the credentials in the session.
-    credentials = flow.credentials
-    session["credentials"] = credentials.to_json()
+#     # Store the credentials in the session.
+#     credentials = flow.credentials
+#     session["credentials"] = credentials.to_json()
 
-    return redirect(url_for("home"))
+#     return redirect(url_for("home"))
 
-@app.route("/logout")
-def logout():
-    # print(session["credentials"])
-    session.pop("credentials", None)
-    return redirect(url_for("login"))
+# @app.route("/logout")
+# def logout():
+#     # print(session["credentials"])
+#     session.pop("credentials", None)
+#     return redirect(url_for("login"))
 
-@app.route("/create")
+@calendar.route("/create")
+@login_required
 def create():
 
     # Load the credentials from the JSON string
-    credentials_info = json.loads(session["credentials"])
+    credentials_info = credentials_info = {
+        'token': current_user.access_token,
+        'refresh_token': current_user.refresh_token,
+        'token_uri': getenv('GOOGLE_GET_TOKENS_URL'),
+        'client_id': getenv('GOOGLE_CLIENT_ID'),
+        'client_secret': getenv('GOOGLE_CLIENT_SECRET'),
+        'scopes': SCOPES
+    } #json.loads(session["credentials"])
 
     credentials = Credentials.from_authorized_user_info(credentials_info, SCOPES)
     service = build("calendar", "v3", credentials=credentials)
@@ -127,16 +149,24 @@ def create():
             ],
         },
     }
-    service.events().insert(calendarId="dmurage140@gmail.com", body=event).execute()
+    service.events().insert(calendarId=current_user.email, body=event).execute()
     return redirect(url_for("home"))
 
-@app.route("/delete/<event_id>", methods=["DELETE"])
+@calendar.route("/delete/<event_id>", methods=["DELETE"])
+@login_required
 def delete(event_id):
-    if "credentials" not in session:
-        return redirect(url_for("login"))
+    # if "credentials" not in session:
+    #     return redirect(url_for("login"))
 
     # Load the credentials from the JSON string
-    credentials_info = json.loads(session["credentials"])
+    credentials_info = jcredentials_info = {
+        'token': current_user.access_token,
+        'refresh_token': current_user.refresh_token,
+        'token_uri': getenv('GOOGLE_GET_TOKENS_URL'),
+        'client_id': getenv('GOOGLE_CLIENT_ID'),
+        'client_secret': getenv('GOOGLE_CLIENT_SECRET'),
+        'scopes': SCOPES
+    } #json.loads(session["credentials"])
 
     credentials = Credentials.from_authorized_user_info(credentials_info, SCOPES)
     service = build("calendar", "v3", credentials=credentials)
@@ -149,7 +179,5 @@ def delete(event_id):
         return jsonify({"status": "error", "message": f"Error deleting event: {error}"})
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
+# if __name__ == "__main__":
+#     app.run(debug=True)

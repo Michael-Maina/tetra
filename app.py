@@ -29,6 +29,14 @@ login_manager.init_app(app)
 from auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
 
+# Register blueprint for audio routes
+from views import audio as audio_blueprint
+app.register_blueprint(audio_blueprint)
+
+# Register blueprint for calendar routes
+from calender_app import calendar as cal_blueprint
+app.register_blueprint(cal_blueprint)
+
 
 @app.route('/', methods=['GET'], strict_slashes=False)
 def index():
@@ -40,13 +48,12 @@ def index():
 def logged_in():
     """ Testing Login """
 
-    contacts = get_user_contact('l', current_user.access_token)
-    transcribed_text = transcribe_audio('./Recording.m4a')
-    entities = extract_entities(transcribed_text)
-    print()
-    print(type(entities))
-    print(entities)
-    print()
+    # contacts = get_user_contact('l', current_user.access_token)
+    # transcribed_text = transcribe_audio('./Recording.m4a')
+    # entities = extract_entities(transcribed_text)
+    # print()
+    # print(entities)
+    # print()
     return render_template('logged_in.html')
 
 @login_manager.user_loader
