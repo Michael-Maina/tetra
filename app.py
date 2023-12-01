@@ -64,7 +64,7 @@ def logged_in():
     # print()
     # print(entities)
     # print()
-    return render_template('logged_in.html')
+    return render_template('home.html')
 
 @login_manager.user_loader
 def load_user(user_id):
