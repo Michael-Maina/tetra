@@ -273,6 +273,7 @@ body.dark .switch::before{
     width: calc(100% = 250px);
     background: var(--body-color);
     transition: var(--tran-05);
+    padding: 0 25px;
 }
 
 .home .text{

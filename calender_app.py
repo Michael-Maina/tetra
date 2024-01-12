@@ -2,14 +2,15 @@ import json
 from flask import Blueprint, Flask, render_template, redirect, request, url_for, session, jsonify
 from flask_login import current_user, login_required
 from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import Flow
-from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import os.path
 from os import getenv
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+from uuid import uuid4
+from models.event import Event
+
 
 
 # Create auth blueprint
@@ -18,20 +19,13 @@ calendar = Blueprint('calendar', __name__)
 # Load environment variables
 load_dotenv()
 
-
-# Disable OAuthlib's HTTPs verification when running locally.
-# This is only for testing purposes!
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
-
-# app = Flask(__name__)
-# app.secret_key = "Alstede2480"  # Replace with a strong secret key
-
 # If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/calendar"]
+SCOPES = ['https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/contacts.other.readonly',
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.events']
 
-# # This should be set to your web app's URL
-# REDIRECT_URI = "http://localhost:5000/oauth2callback"
 
 # The client_secrets.json file downloaded from the Google Cloud Console
 CLIENT_SECRETS = "credentials.json"
@@ -40,8 +34,6 @@ CLIENT_SECRETS = "credentials.json"
 @calendar.route("/calendar")
 @login_required
 def home():
-    # if "credentials" not in session:
-    #     return redirect(url_for("login"))
 
     # Load the credentials from the JSON string
     credentials_info = {
@@ -51,9 +43,11 @@ def home():
         'client_id': getenv('GOOGLE_CLIENT_ID'),
         'client_secret': getenv('GOOGLE_CLIENT_SECRET'),
         'scopes': SCOPES
-    } #json.loads(session["credentials"])
+    }
 
     credentials = Credentials.from_authorized_user_info(credentials_info, SCOPES)
+
+
     service = build("calendar", "v3", credentials=credentials)
 
     now = datetime.utcnow().isoformat() + "Z"
@@ -71,7 +65,11 @@ def home():
     )
     events = events_result.get("items", [])
 
-    print(events)
+    for event in events:
+        print()
+        print(event)
+        print()
+
     if not events:
         return "No upcoming events found."
 
@@ -80,38 +78,9 @@ def home():
         start = event["start"].get("dateTime", event["start"].get("date"))
         upcoming_events.append({"start": start, "summary": event["summary"], "id": event["id"]})
 
+    # print(upcoming_events)
     return render_template("home.html", upcoming_events=upcoming_events)
 
-
-# @app.route("/login")
-# def login():
-#     flow = Flow.from_client_secrets_file(CLIENT_SECRETS, SCOPES, redirect_uri=REDIRECT_URI)
-#     authorization_url, state = flow.authorization_url(prompt="consent")
-
-#     # Store the state so the callback can verify the response.
-#     session["oauth_state"] = state
-
-#     return redirect(authorization_url)
-
-
-# @app.route("/oauth2callback")
-# def oauth2callback():
-#     state = session["oauth_state"]
-
-#     flow = Flow.from_client_secrets_file(CLIENT_SECRETS, SCOPES, state=state, redirect_uri=REDIRECT_URI)
-#     flow.fetch_token(authorization_response=request.url)
-
-#     # Store the credentials in the session.
-#     credentials = flow.credentials
-#     session["credentials"] = credentials.to_json()
-
-#     return redirect(url_for("home"))
-
-# @app.route("/logout")
-# def logout():
-#     # print(session["credentials"])
-#     session.pop("credentials", None)
-#     return redirect(url_for("login"))
 
 @calendar.route("/create")
 @login_required
@@ -125,7 +94,7 @@ def create():
         'client_id': getenv('GOOGLE_CLIENT_ID'),
         'client_secret': getenv('GOOGLE_CLIENT_SECRET'),
         'scopes': SCOPES
-    } #json.loads(session["credentials"])
+    }
 
     credentials = Credentials.from_authorized_user_info(credentials_info, SCOPES)
     service = build("calendar", "v3", credentials=credentials)
@@ -133,6 +102,8 @@ def create():
     event = {
         'summary': 'Test Event',
         'description': 'This is a test event.',
+        'conferenceDataVersion': 1,
+
         'start': {
             'dateTime': (datetime.now() + timedelta(days=1)).isoformat(),
             'timeZone': 'UTC',
@@ -142,42 +113,58 @@ def create():
             'timeZone': 'UTC',
         },
         'reminders': {
-            'useDefault': False,  # Set to False to use custom reminders
+            'useDefault': False,
             'overrides': [
-                {'method': 'popup', 'minutes': 10},  # Notify 10 minutes before the event
-                {'method': 'email', 'minutes': 30},  # Notify 30 minutes before the event via email
+                {'method': 'popup', 'minutes': 10},
+                {'method': 'email', 'minutes': 30},
             ],
         },
-    }
-    service.events().insert(calendarId=current_user.email, body=event).execute()
-    return redirect(url_for("home"))
 
-@calendar.route("/delete/<event_id>", methods=["DELETE"])
+        'attendees': [{
+            'email': "dmurage140@gmail.com"
+        }],
+
+        'conferenceData': {
+            'createRequest': {
+                "requestId": str(uuid4()),
+                'conferenceSolutionKey': {
+                    'type': 'hangoutsMeet'
+                }
+            }
+        },
+    }
+
+    new_event = service.events().insert(calendarId=current_user.email, body=event, sendUpdates="all", conferenceDataVersion=1).execute()
+
+    # db_event = Event(
+
+    # )
+
+    print("New event: ")
+    print(new_event)
+
+    return redirect(url_for("calendar.home"))
+
+
+@calendar.route("/delete/<event_id>")
 @login_required
 def delete(event_id):
-    # if "credentials" not in session:
-    #     return redirect(url_for("login"))
 
     # Load the credentials from the JSON string
-    credentials_info = jcredentials_info = {
+    credentials_info =  {
         'token': current_user.access_token,
         'refresh_token': current_user.refresh_token,
         'token_uri': getenv('GOOGLE_GET_TOKENS_URL'),
         'client_id': getenv('GOOGLE_CLIENT_ID'),
         'client_secret': getenv('GOOGLE_CLIENT_SECRET'),
         'scopes': SCOPES
-    } #json.loads(session["credentials"])
+    }
 
     credentials = Credentials.from_authorized_user_info(credentials_info, SCOPES)
     service = build("calendar", "v3", credentials=credentials)
 
     try:
         service.events().delete(calendarId="primary", eventId=event_id).execute()
-        # return jsonify({"status": "success", "message": "Event deleted successfully"})
-        return redirect(url_for("home"))
+        return redirect(url_for("calendar.home"))
     except HttpError as error:
         return jsonify({"status": "error", "message": f"Error deleting event: {error}"})
-
-
-# if __name__ == "__main__":
-#     app.run(debug=True)

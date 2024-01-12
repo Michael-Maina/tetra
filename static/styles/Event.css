@@ -1,14 +1,48 @@
-#events-container {
-    max-width: 600px;
-    margin: auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+body, ul, li, p, time {
+    margin: 0;
+    padding: 0;
 }
-.event {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+
+ul.custom-list {
+    list-style-type: none;
 }
+
+.custom-list {
+    border-collapse: separate;
+    border-spacing: 0 1em; /* Adjust as needed */
+}
+
+.custom-flex-container {
+    display: flex;
+    min-width: 0;
+    gap: 1.5rem; /* Adjust as needed */
+}
+
+.custom-image {
+    height: 12rem;
+    width: 12rem;
+    flex: none;
+    border-radius: 50%;
+    background-color: #f0f0f0; /* Placeholder background color */
+}
+
+.custom-text-container {
+    min-width: 0;
+    flex: auto;
+}
+
+.custom-text-bold {
+    font-size: 1rem; /* Adjust as needed */
+    font-weight: bold;
+}
+
+.custom-text {
+    font-size: 0.875rem; /* Adjust as needed */
+    color: #555; /* Adjust text color as needed */
+}
+
+.custom-hidden-container {
+    display: none;
+}
+
+/* Add other styles as needed */

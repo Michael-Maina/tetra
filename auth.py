@@ -38,10 +38,16 @@ def signup():
     query_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
     tokens_response = requests.post(tokens_url, params=query_params, headers=query_headers)
-    
+
     id_token = tokens_response.json().get('id_token')
     access_token = tokens_response.json().get('access_token')
     refresh_token = tokens_response.json().get('refresh_token')
+
+    print(id_token)
+    print("access_token:")
+    print(access_token)
+    print("refresh_token:")
+    print(refresh_token)
 
     # Get the user details from the ID token
     google_user = jwt.decode(jwt=id_token, options={"verify_signature": False})
@@ -79,6 +85,7 @@ def login():
     if user.is_authenticated:
         return redirect(url_for('logged_in'))
 
+    print(session["credentials"])
     if session.get('credentials').get('expires_in') <= 0:
         new_token = refresh(user.refresh_token)
         session['credentials']['access_token'] = new_token
@@ -90,7 +97,7 @@ def login():
     elif user_data.get('status') == 'expired':
         new_token = refresh(user.refresh_token)
         user.access_token = new_token
-    
+
     user.authenticated = True
     login_user(user, remember=True)
     return redirect(url_for('logged_in'))
@@ -100,7 +107,7 @@ def login():
 @login_required
 def logout():
     """ Logout """
-    
+
     user = current_user
     user.authenticated = False
     logout_user()

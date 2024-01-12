@@ -73,24 +73,24 @@ document.addEventListener('DOMContentLoaded', function () {
 // Add your Google Calendar API integration here
 
 // Sample data (replace with your actual data)
-const sampleEvents = [
-    { summary: 'Event 1', start: '2023-11-30T10:00:00Z' },
-    { summary: 'Event 2', start: '2023-12-01T15:30:00Z' },
-    // Add more events as needed
-];
+// const sampleEvents = [
+//     { summary: 'Event 1', start: '2023-11-30T10:00:00Z' },
+//     { summary: 'Event 2', start: '2023-12-01T15:30:00Z' },
+//     // Add more events as needed
+// ];
 
-function renderEvents(events) {
-    const eventsList = document.getElementById('events-list');
-    eventsList.innerHTML = '';
+// function renderEvents(events) {
+//     const eventsList = document.getElementById('events-list');
+//     eventsList.innerHTML = '';
 
-    events.forEach(event => {
-        const eventElement = document.createElement('div');
-        eventElement.classList.add('event');
-        eventElement.innerHTML = `<strong>${event.summary}</strong><br>${new Date(event.start).toLocaleString()}`;
-        eventsList.appendChild(eventElement);
-    });
-}
+//     events.forEach(event => {
+//         const eventElement = document.createElement('div');
+//         eventElement.classList.add('event');
+//         eventElement.innerHTML = `<strong>${event.summary}</strong><br>${new Date(event.start).toLocaleString()}`;
+//         eventsList.appendChild(eventElement);
+//     });
+// }
 
-// Call the Google Calendar API and pass the received events to renderEvents function
-// Replace this with your actual API call
-renderEvents(sampleEvents);
+// // Call the Google Calendar API and pass the received events to renderEvents function
+// // Replace this with your actual API call
+// renderEvents(sampleEvents);
